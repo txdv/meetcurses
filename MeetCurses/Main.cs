@@ -73,10 +73,25 @@ namespace MeetCurses
       }
       return true;
     }
+
+    TwitterUserCollection friends = null;
+    public TwitterUserCollection GetFriends()
+    {
+      if (friends == null) {
+        var response = TwitterFriendship.Friends(MainClass.config.GetOAuthTokens());
+        if (response.Result == RequestResult.Success) {
+          friends = response.ResponseObject;
+        }
+      }
+      return friends;
+    }
   }
 
   class MainClass
   {
+    public static int FriendsColor;
+    public static int SelfColor;
+
     private static bool ValidateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
     {
       if (sslPolicyErrors == SslPolicyErrors.None)
@@ -109,7 +124,12 @@ namespace MeetCurses
       }
 
       Application.Init(false);
+
+      FriendsColor = Application.MakeColor(Curses.COLOR_BLUE,  Curses.COLOR_BLACK);
+      SelfColor    = Application.MakeColor(Curses.COLOR_WHITE, Curses.COLOR_BLACK);
       
+      Application.ColorNormal = Application.MakeColor(Curses.COLOR_WHITE, Curses.COLOR_BLACK);
+
       Frames f = new Frames();
 
       FullWindowContainer fwc = new FullWindowContainer(f);
@@ -137,7 +157,7 @@ namespace MeetCurses
         }
         f.Redraw();
       };
-      
+
       Application.Run(fwc);
     }
   }

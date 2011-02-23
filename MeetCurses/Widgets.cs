@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Mono.Terminal;
 using Twitterizer;
 
@@ -187,14 +188,42 @@ namespace MeetCurses
         return status.User.ScreenName;
     }
 
-    protected int DrawStatus(int line, int nickWidth, TwitterStatus status)
+    protected void DrawName(int line, int nickWidth, TwitterStatus status)
     {
       string name = GetName(status);
       BaseMove(line, 0);
+
+      // draw prefix whitespaces
       for (int i = 0; i < nickWidth - name.Length; i++)
         Curses.addch(' ');
 
+      var friends = MainClass.config.GetFriends();
+
+      if (status.User.ScreenName == MainClass.config.ScreenName) {
+        Curses.attrset(MainClass.SelfColor);
+      } else {
+        var res = from f in friends
+                  where f.ScreenName == status.User.ScreenName
+                  select f;
+
+        bool friend = res.Count() > 0;
+        if (friend) {
+          Curses.attrset(MainClass.FriendsColor);
+        }
+      }
+
+      Curses.attron(Curses.A_BOLD);
       Curses.addstr(name);
+      Curses.attroff(Curses.A_BOLD);
+
+      Curses.attrset(Application.ColorNormal);
+    }
+
+    protected int DrawStatus(int line, int nickWidth, TwitterStatus status)
+    {
+      Curses.attrset(Application.ColorNormal);
+
+      DrawName(line, nickWidth, status);
 
       int lineWidth = w - x - nickWidth - 3;
 
