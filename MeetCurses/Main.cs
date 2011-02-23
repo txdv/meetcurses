@@ -33,10 +33,12 @@ namespace MeetCurses
 
   public class Config : Configuration
   {
-    public string ConsumerKey       { get; set; }
-    public string ConsumerSecret    { get; set; }
-    public string AccessToken       { get; set; }
-    public string AccessTokenSecret { get; set; }
+    public string  ConsumerKey       { get; set; }
+    public string  ConsumerSecret    { get; set; }
+    public string  AccessToken       { get; set; }
+    public string  AccessTokenSecret { get; set; }
+    public string  ScreenName        { get; set; }
+    public Decimal UserId            { get; set; }
 
     public OAuthTokens GetOAuthTokens()
     {
@@ -62,9 +64,10 @@ namespace MeetCurses
     {
       try {
         var accessToken = GetAccessToken(token, verifier);
-  
         AccessToken       = accessToken.Token;
         AccessTokenSecret = accessToken.TokenSecret;
+        ScreenName        = accessToken.ScreenName;
+        UserId            = accessToken.UserId;
       } catch {
         return false;
       }
