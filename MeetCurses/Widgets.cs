@@ -165,7 +165,7 @@ namespace MeetCurses
     public void UpdatePublicTimeLine()
     {
 
-      Update(TwitterTimeline.PublicTimeline(MainClass.config.GetOAuthTokens()).ResponseObject);
+      Update(TwitterTimeline.PublicTimeline(MainClass.Configuration.GetOAuthTokens()).ResponseObject);
     }
 
     public void UpdateHomeTimeline()
@@ -174,7 +174,7 @@ namespace MeetCurses
         Count = h - y
       };
 
-      Update(TwitterTimeline.HomeTimeline(MainClass.config.GetOAuthTokens(), to).ResponseObject);
+      Update(TwitterTimeline.HomeTimeline(MainClass.Configuration.GetOAuthTokens(), to).ResponseObject);
     }
 
     public bool ShowRealName { get; set; }
@@ -196,9 +196,9 @@ namespace MeetCurses
       for (int i = 0; i < nickWidth - name.Length; i++)
         Curses.addch(' ');
 
-      var friends = MainClass.config.GetFriends();
+      var friends = MainClass.Configuration.GetFriends();
 
-      if (status.User.ScreenName == MainClass.config.ScreenName) {
+      if (status.User.ScreenName == MainClass.Configuration.ScreenName) {
         Curses.attrset(MainClass.SelfColor);
       } else {
         var res = from f in friends
@@ -277,26 +277,26 @@ namespace MeetCurses
 
   class ConfigurationManager : Container
   {
-    public ConfigurationManager(Config config)
-      : this(0, 0, 0, 0, config)
+    public ConfigurationManager(Configuration configuration)
+      : this(0, 0, 0, 0, configuration)
     {
     }
 
-    public ConfigurationManager(int x, int y, int w, int h, Config config)
+    public ConfigurationManager(int x, int y, int w, int h, Configuration configuration)
       : base(x, y, w, h)
     {
-      Config = config;
+      Configuration = configuration;
 
-      Add(new Label(7, 1, "ConsumerKey: " + Config.ConsumerKey));
+      Add(new Label(7, 1, "ConsumerKey: "       + Configuration.ConsumerKey));
 
-      Add(new Label(4, 3, "ConsumerSecret: " + Config.ConsumerSecret));
+      Add(new Label(4, 3, "ConsumerSecret: "    + Configuration.ConsumerSecret));
 
-      Add(new Label(7, 5, "AccessToken: " + Config.AccessToken));
+      Add(new Label(7, 5, "AccessToken: "       + Configuration.AccessToken));
 
-      Add(new Label(1, 7, "AccessTokenSecret: " + Config.AccessTokenSecret));
+      Add(new Label(1, 7, "AccessTokenSecret: " + Configuration.AccessTokenSecret));
     }
 
-    public Config Config { get; set; }
+    public Configuration Configuration { get; set; }
 
     public override void Redraw()
     {

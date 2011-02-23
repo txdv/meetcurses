@@ -10,7 +10,7 @@ using Twitterizer;
 namespace MeetCurses
 {
   [Serializable]
-  public class Configuration
+  public abstract class BaseConfiguration
   {
     public static void Serialize(string file, Configuration c)
     {
@@ -31,7 +31,7 @@ namespace MeetCurses
     }
   }
 
-  public class Config : Configuration
+  public class Configuration : BaseConfiguration
   {
     public string  ConsumerKey       { get; set; }
     public string  ConsumerSecret    { get; set; }
@@ -78,7 +78,7 @@ namespace MeetCurses
     public TwitterUserCollection GetFriends()
     {
       if (friends == null) {
-        var response = TwitterFriendship.Friends(MainClass.config.GetOAuthTokens());
+        var response = TwitterFriendship.Friends(MainClass.Configuration.GetOAuthTokens());
         if (response.Result == RequestResult.Success) {
           friends = response.ResponseObject;
         }
@@ -107,21 +107,21 @@ namespace MeetCurses
       return false;
     }
 
-    public static Config config = (Config)Configuration.Deserialize("MeetCurses.xml", typeof(Config));
+    public static Configuration Configuration = (Configuration)Configuration.Deserialize("MeetCurses.xml", typeof(Configuration));
 
     public static void Main(string[] args)
     {
       ServicePointManager.ServerCertificateValidationCallback = ValidateCertificate;
 
-      if (config.AccessToken == null) {
-        var token = config.GetRequestToken();
+      if (Configuration.AccessToken == null) {
+        var token = Configuration.GetRequestToken();
         Uri uri = OAuthUtility.BuildAuthorizationUri(token.Token);
 
         Console.WriteLine(uri);
 
-        config.Update(token, Console.ReadLine());
+        Configuration.Update(token, Console.ReadLine());
 
-        Configuration.Serialize("MeetCurses.xml", config);
+        Configuration.Serialize("MeetCurses.xml", Configuration);
       }
 
       Application.Init(false);
@@ -140,7 +140,7 @@ namespace MeetCurses
 
       f.AddFrame('1', publicTimeLine);
       
-      f.AddFrame('2', new ConfigurationManager(MainClass.config));
+      f.AddFrame('2', new ConfigurationManager(MainClass.Configuration));
 
       f.KeyPressed += delegate(int obj) {
         switch (obj) {
