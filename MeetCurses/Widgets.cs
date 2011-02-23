@@ -164,7 +164,6 @@ namespace MeetCurses
 
     public void UpdatePublicTimeLine()
     {
-
       Update(TwitterTimeline.PublicTimeline(MainClass.Configuration.User.GetOAuthTokens()).ResponseObject);
     }
 
@@ -303,7 +302,6 @@ namespace MeetCurses
       Clear();
       base.Redraw();
     }
-
   }
   
   public class Box : Container
