@@ -118,7 +118,6 @@ namespace MeetCurses
   
     public override void Redraw()
     {
-      Clear();
       if (ActiveWidget != null) {
         ActiveWidget.x = x;
         ActiveWidget.y = y;
@@ -219,11 +218,15 @@ namespace MeetCurses
       Curses.attrset(Application.ColorNormal);
     }
 
+    protected void DrawWhiteSpaces(int count)
+    {
+      for (int i = 0; i < count; i++)
+        Curses.addch(' ');
+    }
+
     protected int DrawStatus(int line, int nickWidth, TwitterStatus status)
     {
       Curses.attrset(Application.ColorNormal);
-
-      DrawName(line, nickWidth, status);
 
       int lineWidth = w - x - nickWidth - 3;
 
@@ -234,10 +237,18 @@ namespace MeetCurses
 
       int j;
       for (j = 0; j < times; j++) {
-        BaseMove(line + j, nickWidth);
+        BaseMove(line + j, 0);
+        if (j == 0) {
+          DrawName(line, nickWidth, status);
+        } else {
+          DrawWhiteSpaces(nickWidth);
+        }
+
         Curses.addstr(" | ");
         int min = Math.Min(lineWidth, status.Text.Length - j * lineWidth);
         Curses.addstr(status.Text.Substring(j * lineWidth, min));
+
+        DrawWhiteSpaces(lineWidth - min);
       }
       return j;
     }
@@ -281,6 +292,13 @@ namespace MeetCurses
     }
 
     public Config Config { get; set; }
+
+    public override void Redraw()
+    {
+      Clear();
+      base.Redraw();
+    }
+
   }
   
   public class Box : Container
