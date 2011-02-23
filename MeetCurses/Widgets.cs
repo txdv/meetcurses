@@ -275,8 +275,29 @@ namespace MeetCurses
     }
   }
 
+  class ConfigurationUnit
+  {
+    public ConfigurationUnit(string label, Widget widget)
+    {
+      LabelText = label;
+      Label = new Label(0, 0, LabelText + " : ");
+      Widget = widget;
+    }
+
+    public ConfigurationUnit(string label, string text)
+      : this(label, new Label(0, 0, text))
+    {
+    }
+
+    public string LabelText { get; set; }
+    public Label Label { get; set; }
+    public Widget Widget { get; set; }
+  }
+
   class ConfigurationManager : Container
   {
+    private List<ConfigurationUnit> list = new List<ConfigurationUnit>();
+
     public ConfigurationManager(Configuration configuration)
       : this(0, 0, 0, 0, configuration)
     {
@@ -287,13 +308,27 @@ namespace MeetCurses
     {
       Configuration = configuration;
 
-      Add(new Label(7, 1, "ConsumerKey: "       + Configuration.User.ConsumerKey));
+      list.Add(new ConfigurationUnit("ConsumerKey",       Configuration.User.ConsumerKey));
+      list.Add(new ConfigurationUnit("ConsumerSecret",    Configuration.User.ConsumerSecret));
+      list.Add(new ConfigurationUnit("AccessToken",       Configuration.User.AccessToken));
+      list.Add(new ConfigurationUnit("AccessTokenSecret", Configuration.User.AccessTokenSecret));
 
-      Add(new Label(4, 3, "ConsumerSecret: "    + Configuration.User.ConsumerSecret));
+      int length = 0;
+      foreach (var cu in list) {
+        length = Math.Max(length, cu.LabelText.Length);
+      }
 
-      Add(new Label(7, 5, "AccessToken: "       + Configuration.User.AccessToken));
+      int height = 1;
+      foreach (var cu in list) {
+        cu.Label.y = height;
+        cu.Label.x = 1 + length - cu.LabelText.Length;
+        cu.Widget.y = height;
+        cu.Widget.x = 1 + length + 3;
 
-      Add(new Label(1, 7, "AccessTokenSecret: " + Configuration.User.AccessTokenSecret));
+        Add(cu.Label);
+        Add(cu.Widget);
+        height += 2;
+      }
     }
 
     public Configuration Configuration { get; set; }
