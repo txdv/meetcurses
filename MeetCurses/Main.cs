@@ -91,6 +91,7 @@ namespace MeetCurses
   {
     public static int FriendsColor;
     public static int SelfColor;
+    public static short BackgroundColor;
 
     private static bool ValidateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
     {
@@ -125,10 +126,11 @@ namespace MeetCurses
 
       Application.Init(false);
 
-      FriendsColor = Application.MakeColor(Curses.COLOR_BLUE,  Curses.COLOR_BLACK);
-      SelfColor    = Application.MakeColor(Curses.COLOR_WHITE, Curses.COLOR_BLACK);
-      
-      Application.ColorNormal = Application.MakeColor(Curses.COLOR_WHITE, Curses.COLOR_BLACK);
+      BackgroundColor = Curses.COLOR_BLACK;
+      FriendsColor = Application.MakeColor(Curses.COLOR_BLUE,  BackgroundColor);
+      SelfColor    = Application.MakeColor(Curses.COLOR_WHITE, BackgroundColor);
+
+      Application.ColorNormal = Application.MakeColor(Curses.COLOR_WHITE, BackgroundColor);
 
       Frames f = new Frames();
 
