@@ -134,7 +134,7 @@ namespace MeetCurses
 
       Application.Init(false);
 
-      BackgroundColor = Curses.COLOR_BLACK;
+      BackgroundColor = -1;
       FriendsColor = Application.MakeColor(Curses.COLOR_BLUE,  BackgroundColor);
       SelfColor    = Application.MakeColor(Curses.COLOR_WHITE, BackgroundColor);
 
