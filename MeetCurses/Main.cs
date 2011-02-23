@@ -119,13 +119,14 @@ namespace MeetCurses
       ServicePointManager.ServerCertificateValidationCallback = ValidateCertificate;
 
       if (Configuration.User.AccessToken == null) {
+        Console.WriteLine("Retrieving Configuration Token ..");
+
         var token = Configuration.User.GetRequestToken();
         Uri uri = OAuthUtility.BuildAuthorizationUri(token.Token);
 
-        Console.WriteLine("Retrieving Configuration Token");
         Console.WriteLine(uri);
-        Console.WriteLine("Enter verficiation code:");
 
+        Console.Write("Enter verficiation code: ");
         Configuration.User.Update(token, Console.ReadLine());
 
         Configuration.Serialize("MeetCurses.xml", Configuration);
