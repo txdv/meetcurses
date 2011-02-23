@@ -27,6 +27,12 @@ namespace MeetCurses
     
     public override void Redraw()
     {
+      AdjustWidgetSize();
+      Widget.Redraw();
+    }
+
+    protected void AdjustWidgetSize()
+    {
       x = 0;
       y = 0;
       w = Application.Cols;
@@ -38,8 +44,12 @@ namespace MeetCurses
         widget.w = w;
         widget.h = h;
       }
+    }
 
-      Widget.Redraw();
+    public override void DoSizeChanged()
+    {
+      AdjustWidgetSize();
+      base.DoSizeChanged();
     }
   }
   
