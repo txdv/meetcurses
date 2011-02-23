@@ -169,7 +169,7 @@ namespace MeetCurses
 
     public bool ShowRealName { get; set; }
 
-    public string GetName(TwitterStatus status)
+    protected string GetName(TwitterStatus status)
     {
       if (ShowRealName)
         return status.User.Name;
@@ -177,41 +177,45 @@ namespace MeetCurses
         return status.User.ScreenName;
     }
 
+    protected int DrawStatus(int line, int nickWidth, TwitterStatus status)
+    {
+      string name = GetName(status);
+      BaseMove(line, 0);
+      for (int i = 0; i < nickWidth - name.Length; i++)
+        Curses.addch(' ');
+
+      Curses.addstr(name);
+
+      int lineWidth = w - x - nickWidth - 3;
+
+      int times = status.Text.Length / lineWidth;
+
+      if (status.Text.Length % lineWidth != 0)
+        times++;
+
+      int j;
+      for (j = 0; j < times; j++) {
+        BaseMove(line + j, nickWidth);
+        Curses.addstr(" | ");
+        int min = Math.Min(lineWidth, status.Text.Length - j * lineWidth);
+        Curses.addstr(status.Text.Substring(j * lineWidth, min));
+      }
+      return j;
+    }
+
     public override void Redraw()
     {
       if (collection == null)
         return;
 
-      int maxLen = 0;
+      int nickWidth = 0;
       foreach (var entry in collection) {
-        int newLen = GetName(entry).Length;
-        if (newLen > maxLen) maxLen = newLen;
+        nickWidth = Math.Max(nickWidth, GetName(entry).Length);
       }
 
       int line = y;
-      foreach (var entry in collection) {
-        string name = GetName(entry);
-        BaseMove(line, 0);
-        for (int i = 0; i < maxLen - name.Length; i++)
-          Curses.addch(' ');
-
-        Curses.addstr(name);
-
-        int lineWidth = w - x - maxLen - 3;
-
-        int times = entry.Text.Length / lineWidth;
-
-        if (entry.Text.Length % lineWidth != 0)
-          times++;
-
-        for (int i = 0; i < times; i++) {
-          BaseMove(line, maxLen);
-          Curses.addstr(" | ");
-          int min = Math.Min(lineWidth, entry.Text.Length - i * lineWidth);
-          Curses.addstr(entry.Text.Substring(i * lineWidth, min));
-
-          line++;
-        }
+      foreach (var status in collection) {
+        line += DrawStatus(line, nickWidth, status);
       }
     }
   }
