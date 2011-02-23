@@ -117,10 +117,6 @@ namespace MeetCurses
       
       f.AddFrame('2', new ConfigurationManager(MainClass.config));
 
-      f.AddFrame('3', new Label(0, 10, config.AccessToken == null ? "nesamone" : "gal ir ne"));
-
-      f.AddFrame('l', new Label(0, 10, "login"));
-
       f.KeyPressed += delegate(int obj) {
         switch (obj) {
         case 'u':
