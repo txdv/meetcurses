@@ -1,0 +1,3 @@
+[submodule "mono-curses"]
+	path = mono-curses
+	url = https://github.com/mono/mono-curses.git
