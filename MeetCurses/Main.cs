@@ -150,14 +150,15 @@ namespace MeetCurses
           break;
         case 'n':
           f.NextFrame();
+          f.Redraw();
           break;
         case 'p':
           f.PreviousFrame();
+          f.Redraw();
           break;
         default:
           break;
         }
-        f.Redraw();
       };
 
       Application.Run(fwc);
