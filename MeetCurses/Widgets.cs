@@ -255,6 +255,7 @@ namespace MeetCurses
     public override void Redraw()
     {
       if ((collection == null) || (collection.Count() == 0)) {
+        Curses.attrset(Application.ColorNormal);
         Clear();
         string info = "No tweets loaded";
         BaseMove(Application.Lines/2, Application.Cols/2 - info.Length/2);
@@ -299,6 +300,7 @@ namespace MeetCurses
 
     public override void Redraw()
     {
+      Curses.attrset(Application.ColorNormal);
       Clear();
       base.Redraw();
     }
