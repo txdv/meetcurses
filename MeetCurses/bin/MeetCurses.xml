@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ConsumerKey>S22QIjvwtu9cUKV8ioeV4Q</ConsumerKey>
   <ConsumerSecret>hA0Nh21LhJ93VlE4kpSjYAIOxqYbN64Nxgmanloig</ConsumerSecret>
-</Config>
+</Configuration>
