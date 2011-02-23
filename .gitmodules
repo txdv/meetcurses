@@ -1,3 +1,3 @@
 [submodule "mono-curses"]
 	path = mono-curses
-	url = https://github.com/mono/mono-curses.git
+	url = https://github.com/txdv/mono-curses.git
