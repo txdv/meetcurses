@@ -105,9 +105,9 @@ namespace MeetCurses
 
       // HACK: Mono's certificate chain validator is buggy
       if (sslPolicyErrors == SslPolicyErrors.RemoteCertificateChainErrors && sender is HttpWebRequest) {
-      var request = (HttpWebRequest)sender;
-      if (request.RequestUri.Host == "api.twitter.com" && certificate.Issuer == "OU=Equifax Secure Certificate Authority, O=Equifax, C=US")
-        return true;
+        var request = (HttpWebRequest)sender;
+        if (request.RequestUri.Host == "api.twitter.com" && certificate.Issuer == "OU=Equifax Secure Certificate Authority, O=Equifax, C=US")
+          return true;
       }
       return false;
     }
