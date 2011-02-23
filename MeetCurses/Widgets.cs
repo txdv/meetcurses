@@ -165,7 +165,7 @@ namespace MeetCurses
     public void UpdatePublicTimeLine()
     {
 
-      Update(TwitterTimeline.PublicTimeline(MainClass.Configuration.GetOAuthTokens()).ResponseObject);
+      Update(TwitterTimeline.PublicTimeline(MainClass.Configuration.User.GetOAuthTokens()).ResponseObject);
     }
 
     public void UpdateHomeTimeline()
@@ -174,7 +174,7 @@ namespace MeetCurses
         Count = h - y
       };
 
-      Update(TwitterTimeline.HomeTimeline(MainClass.Configuration.GetOAuthTokens(), to).ResponseObject);
+      Update(TwitterTimeline.HomeTimeline(MainClass.Configuration.User.GetOAuthTokens(), to).ResponseObject);
     }
 
     public bool ShowRealName { get; set; }
@@ -196,9 +196,9 @@ namespace MeetCurses
       for (int i = 0; i < nickWidth - name.Length; i++)
         Curses.addch(' ');
 
-      var friends = MainClass.Configuration.GetFriends();
+      var friends = MainClass.Configuration.User.GetFriends();
 
-      if (status.User.ScreenName == MainClass.Configuration.ScreenName) {
+      if (status.User.ScreenName == MainClass.Configuration.User.ScreenName) {
         Curses.attrset(MainClass.SelfColor);
       } else {
         var res = from f in friends
@@ -287,13 +287,13 @@ namespace MeetCurses
     {
       Configuration = configuration;
 
-      Add(new Label(7, 1, "ConsumerKey: "       + Configuration.ConsumerKey));
+      Add(new Label(7, 1, "ConsumerKey: "       + Configuration.User.ConsumerKey));
 
-      Add(new Label(4, 3, "ConsumerSecret: "    + Configuration.ConsumerSecret));
+      Add(new Label(4, 3, "ConsumerSecret: "    + Configuration.User.ConsumerSecret));
 
-      Add(new Label(7, 5, "AccessToken: "       + Configuration.AccessToken));
+      Add(new Label(7, 5, "AccessToken: "       + Configuration.User.AccessToken));
 
-      Add(new Label(1, 7, "AccessTokenSecret: " + Configuration.AccessTokenSecret));
+      Add(new Label(1, 7, "AccessTokenSecret: " + Configuration.User.AccessTokenSecret));
     }
 
     public Configuration Configuration { get; set; }

@@ -31,7 +31,7 @@ namespace MeetCurses
     }
   }
 
-  public class Configuration : BaseConfiguration
+  public class User
   {
     public string  ConsumerKey       { get; set; }
     public string  ConsumerSecret    { get; set; }
@@ -78,13 +78,18 @@ namespace MeetCurses
     public TwitterUserCollection GetFriends()
     {
       if (friends == null) {
-        var response = TwitterFriendship.Friends(MainClass.Configuration.GetOAuthTokens());
+        var response = TwitterFriendship.Friends(GetOAuthTokens());
         if (response.Result == RequestResult.Success) {
           friends = response.ResponseObject;
         }
       }
       return friends;
     }
+  }
+
+  public class Configuration : BaseConfiguration
+  {
+    public User User { get; set; }
   }
 
   class MainClass
@@ -113,13 +118,15 @@ namespace MeetCurses
     {
       ServicePointManager.ServerCertificateValidationCallback = ValidateCertificate;
 
-      if (Configuration.AccessToken == null) {
-        var token = Configuration.GetRequestToken();
+      if (Configuration.User.AccessToken == null) {
+        var token = Configuration.User.GetRequestToken();
         Uri uri = OAuthUtility.BuildAuthorizationUri(token.Token);
 
+        Console.WriteLine("Retrieving Configuration Token");
         Console.WriteLine(uri);
+        Console.WriteLine("Enter verficiation code:");
 
-        Configuration.Update(token, Console.ReadLine());
+        Configuration.User.Update(token, Console.ReadLine());
 
         Configuration.Serialize("MeetCurses.xml", Configuration);
       }
