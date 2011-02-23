@@ -21,7 +21,7 @@ namespace MeetCurses
     public override bool ProcessKey(int key)
     {
       if (key == 'q')
-        System.Environment.Exit(0);
+        Running = false;
 
       return Widget.ProcessKey(key);
     }
