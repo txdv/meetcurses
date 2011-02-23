@@ -255,8 +255,13 @@ namespace MeetCurses
 
     public override void Redraw()
     {
-      if (collection == null)
+      if (collection == null) {
+        Clear();
+        string info = "No tweets loaded";
+        BaseMove(Application.Lines/2, Application.Cols/2 - info.Length/2);
+        Curses.addstr(info);
         return;
+      }
 
       int nickWidth = 0;
       foreach (var entry in collection) {
