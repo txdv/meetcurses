@@ -140,25 +140,161 @@ namespace MeetCurses
       return base.ProcessKey(key);
     }
   }
-  
-  class MessageWidget : Widget
+
+  class StatusWidget : Widget
   {
-    public MessageWidget()
+    public StatusWidget(TwitterStatus status)
+      : base(0, 0, 0, 0)
+    {
+      CanFocus = true;
+      Status = status;
+    }
+
+    public TwitterStatus Status { get; protected set; }
+
+    public int GetHeight(int nickWidth, int lineWidth)
+    {
+      int height = Status.Text.Length / lineWidth;
+
+      if (Status.Text.Length % lineWidth != 0)
+        height++;
+
+      return height;
+    }
+
+    protected static int SeperatorWidth { get { return 3; } }
+    protected static void DrawSeperator()
+    {
+      Curses.addch(' ');
+      Curses.addch(Curses.ACS_VLINE);
+      Curses.addch(' ');
+    }
+
+    protected string GetName()
+    {
+      if (Container != null && Container is StatusListWidget)
+        return (Container as StatusListWidget).GetName(Status);
+
+      return Status.User.Name;
+    }
+
+    public int NickWidth {
+      get {
+        if (Container != null && Container is StatusListWidget)
+          return (Container as StatusListWidget).NickWidth;
+
+        return GetName().Length;
+      }
+    }
+
+    protected virtual int DrawStatus()
+    {
+      return 0;
+    }
+
+    public int LineWidth {
+      get {
+        return w - NickWidth - SeperatorWidth;
+      }
+    }
+
+    public override void Redraw()
+    {
+      for (int i = 0; i < h; i++) {
+        BaseMove(y + i, 0);
+
+        if (i == 0)
+          DrawName();
+        else
+          DrawWhiteSpaces(NickWidth);
+
+        DrawSeperator();
+
+        int min = Math.Min(LineWidth, Status.Text.Length - i * LineWidth);
+        Curses.addstr(Status.Text.Substring(i * LineWidth, min));
+
+        DrawWhiteSpaces(LineWidth - min);
+
+        if (HasFocus)
+          throw new Exception();
+      }
+    }
+
+    protected bool IsFriend(string screeName)
+    {
+      var res = from f in MainClass.Configuration.User.GetFriends()
+                where f.ScreenName == Status.User.ScreenName
+                select f;
+      return res.Count() > 0;
+    }
+
+    protected virtual void DrawName()
+    {
+      string name = GetName();
+      DrawWhiteSpaces(NickWidth - name.Length);
+
+      string screeName = Status.User.ScreenName;
+
+      Curses.attrset(Application.ColorNormal);
+
+      if (screeName == MainClass.Configuration.User.ScreenName) {
+        Curses.attrset(MainClass.SelfColor);
+      } else if (IsFriend(screeName)) {
+        Curses.attrset(MainClass.FriendsColor);
+      }
+
+      Curses.attron(Curses.A_BOLD);
+      Curses.addstr(name);
+      Curses.attroff(Curses.A_BOLD);
+
+      Curses.attrset(Application.ColorNormal);
+
+    }
+
+    protected void DrawWhiteSpaces(int count)
+    {
+      for (int i = 0; i < count; i++)
+        Curses.addch(' ');
+    }
+  }
+
+  class StatusListWidget : Container
+  {
+    public StatusListWidget()
       : this(0, 0, 0, 0)
     {
     }
 
-    public MessageWidget(int x, int y, int w, int h)
+    public StatusListWidget(int x, int y, int w, int h)
       : base(x, y, w, h)
     {
       ShowRealName = true;
     }
 
-    TwitterStatusCollection collection = null;
+    public int NickWidth {
+      get {
+        int max = 0;
+        foreach (StatusWidget status in this)
+           max = Math.Max(max, GetName(status.Status).Length);
+        return max;
+      }
+    }
 
     public void Update(TwitterStatusCollection collection)
     {
-      this.collection = collection;
+
+      int nickWidth = NickWidth;
+
+      int height = y;
+      foreach (var status in collection) {
+        StatusWidget sw = new StatusWidget(status);
+        sw.y = height;
+        sw.h = sw.GetHeight(nickWidth, w);
+        sw.w = w;
+        sw.x = x;
+        height += sw.h;
+        Add(sw);
+      }
       Redraw();
     }
 
@@ -178,7 +314,7 @@ namespace MeetCurses
 
     public bool ShowRealName { get; set; }
 
-    protected string GetName(TwitterStatus status)
+    public string GetName(TwitterStatus status)
     {
       if (ShowRealName)
         return status.User.Name;
@@ -223,41 +359,14 @@ namespace MeetCurses
         Curses.addch(' ');
     }
 
-    protected int DrawStatus(int line, int nickWidth, TwitterStatus status)
-    {
-      Curses.attrset(Application.ColorNormal);
-
-      int lineWidth = w - x - nickWidth - 3;
-
-      int times = status.Text.Length / lineWidth;
-
-      if (status.Text.Length % lineWidth != 0)
-        times++;
-
-      int j;
-      for (j = 0; j < times; j++) {
-        BaseMove(line + j, 0);
-        if (j == 0) {
-          DrawName(line, nickWidth, status);
-        } else {
-          DrawWhiteSpaces(nickWidth);
-        }
-
-        Curses.addch(' ');
-        Curses.addch(Curses.ACS_VLINE);
-        Curses.addch(' ');
-        
-        int min = Math.Min(lineWidth, status.Text.Length - j * lineWidth);
-        Curses.addstr(status.Text.Substring(j * lineWidth, min));
-
-        DrawWhiteSpaces(lineWidth - min);
-      }
-      return j;
-    }
-
     public override void Redraw()
     {
-      if ((collection == null) || (collection.Count() == 0)) {
+      // HACK: now this is ugly, we need to get rid of this
+      int i = 0;
+      foreach (var bla in this)
+        i++;
+
+      if (i == 0) {
         Curses.attrset(Application.ColorNormal);
         Clear();
         string info = "No tweets loaded";
@@ -265,15 +374,10 @@ namespace MeetCurses
         Curses.addstr(info);
         return;
       }
+      base.Redraw();
+    }
 
-      int nickWidth = 0;
-      foreach (var entry in collection) {
-        nickWidth = Math.Max(nickWidth, GetName(entry).Length);
-      }
 
-      int line = y;
-      foreach (var status in collection) {
-        line += DrawStatus(line, nickWidth, status);
       }
     }
   }

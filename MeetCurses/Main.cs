@@ -144,7 +144,7 @@ namespace MeetCurses
 
       FullWindowContainer fwc = new FullWindowContainer(f);
 
-      MessageWidget publicTimeLine = new MessageWidget();
+      StatusListWidget publicTimeLine = new StatusListWidget();
 
       f.AddFrame('1', publicTimeLine);
       
