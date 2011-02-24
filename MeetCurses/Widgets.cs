@@ -243,7 +243,10 @@ namespace MeetCurses
           DrawWhiteSpaces(nickWidth);
         }
 
-        Curses.addstr(" | ");
+        Curses.addch(' ');
+        Curses.addch(Curses.ACS_VLINE);
+        Curses.addch(' ');
+        
         int min = Math.Min(lineWidth, status.Text.Length - j * lineWidth);
         Curses.addstr(status.Text.Substring(j * lineWidth, min));
 
