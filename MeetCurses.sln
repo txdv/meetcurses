@@ -3,29 +3,53 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeetCurses", "MeetCurses\MeetCurses.csproj", "{78892FA7-2904-48EC-81F0-DF4E8B6AC71A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Manos.IO", "Mono.Terminal\manos\src\Manos.IO\Manos.IO.csproj", "{5E2AA984-1C9C-4890-BEF6-CC2981C49AFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Terminal", "Mono.Terminal\Mono.Terminal\Mono.Terminal.csproj", "{80BE055C-768D-4AC5-8737-427E84895C3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Interop", "Mono.Terminal\Mono.Interop\Mono.Interop.csproj", "{AE5C3C9C-413E-4E83-ADFE-8F92EC57ACB8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E2AA984-1C9C-4890-BEF6-CC2981C49AFF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5E2AA984-1C9C-4890-BEF6-CC2981C49AFF}.Debug|x86.Build.0 = Debug|Any CPU
+		{5E2AA984-1C9C-4890-BEF6-CC2981C49AFF}.Release|x86.ActiveCfg = Release|Any CPU
+		{5E2AA984-1C9C-4890-BEF6-CC2981C49AFF}.Release|x86.Build.0 = Release|Any CPU
 		{78892FA7-2904-48EC-81F0-DF4E8B6AC71A}.Debug|x86.ActiveCfg = Debug|x86
 		{78892FA7-2904-48EC-81F0-DF4E8B6AC71A}.Debug|x86.Build.0 = Debug|x86
 		{78892FA7-2904-48EC-81F0-DF4E8B6AC71A}.Release|x86.ActiveCfg = Release|x86
 		{78892FA7-2904-48EC-81F0-DF4E8B6AC71A}.Release|x86.Build.0 = Release|x86
+		{80BE055C-768D-4AC5-8737-427E84895C3F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{80BE055C-768D-4AC5-8737-427E84895C3F}.Debug|x86.Build.0 = Debug|Any CPU
+		{80BE055C-768D-4AC5-8737-427E84895C3F}.Release|x86.ActiveCfg = Release|Any CPU
+		{80BE055C-768D-4AC5-8737-427E84895C3F}.Release|x86.Build.0 = Release|Any CPU
+		{AE5C3C9C-413E-4E83-ADFE-8F92EC57ACB8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AE5C3C9C-413E-4E83-ADFE-8F92EC57ACB8}.Debug|x86.Build.0 = Debug|Any CPU
+		{AE5C3C9C-413E-4E83-ADFE-8F92EC57ACB8}.Release|x86.ActiveCfg = Release|Any CPU
+		{AE5C3C9C-413E-4E83-ADFE-8F92EC57ACB8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = MeetCurses\MeetCurses.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.FileWidth = 120
-		$1.TabWidth = 2
 		$1.RemoveTrailingWhitespace = True
 		$1.inheritsSet = VisualStudio
 		$1.inheritsScope = text/plain
 		$1.scope = text/plain
 		$0.StandardHeader = $2
 		$2.Text = 
-		$2.inheritsSet = Apache2License
+		$2.IncludeInNewFiles = True
+		$0.TextStylePolicy = $3
+		$3.inheritsSet = null
+		$3.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $4
+		$4.inheritsSet = Mono
+		$4.inheritsScope = text/x-csharp
+		$4.scope = text/x-csharp
 	EndGlobalSection
 EndGlobal

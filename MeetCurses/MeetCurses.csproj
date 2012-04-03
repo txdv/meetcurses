@@ -33,27 +33,49 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="mono-curses, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b59061902d74f38c">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\mono-curses\mono-curses.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml" />
-    <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Twitterizer2, Version=2.3.1.36501, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Twitterizer2.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Data" />
+    <Reference Include="Newtonsoft.Json, Version=4.0.3.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Twitterizer2, Version=2.4.0.2028, Culture=neutral, PublicKeyToken=69d1469eac671567">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Twitterizer2.dll</HintPath>
+    </Reference>
+    <Reference Include="Twitterizer2.Asynchronous, Version=2.4.0.2030, Culture=neutral, PublicKeyToken=69d1469eac671567">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Twitterizer2.Asynchronous.dll</HintPath>
+    </Reference>
+    <Reference Include="Twitterizer2.Streaming, Version=2.4.0.2030, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Twitterizer2.Streaming.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Widgets.cs" />
+    <Compile Include="App.cs" />
+    <Compile Include="Widgets\Entry.cs" />
+    <Compile Include="Widgets\Timeline.cs" />
+    <Compile Include="ManosTwitter.cs" />
+    <Compile Include="Widgets\MainWindow.cs" />
+    <Compile Include="Widgets\Statusbar.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\Mono.Terminal\Mono.Terminal\Mono.Terminal.csproj">
+      <Project>{80BE055C-768D-4AC5-8737-427E84895C3F}</Project>
+      <Name>Mono.Terminal</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.Terminal\manos\src\Manos.IO\Manos.IO.csproj">
+      <Project>{5E2AA984-1C9C-4890-BEF6-CC2981C49AFF}</Project>
+      <Name>Manos.IO</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Widgets\" />
+  </ItemGroup>
 </Project>
