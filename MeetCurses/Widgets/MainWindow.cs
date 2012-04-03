@@ -26,7 +26,9 @@ namespace MeetCurses
 					App.Tweeting = false;
 					if (response.Result == RequestResult.Success) {
 						Timeline.Add(response.ResponseObject);
-						App.UserInformation.NumberOfStatuses++;
+						if (App.UserInformation != null) {
+							App.UserInformation.NumberOfStatuses++;
+						}
 					}
 				});
 				Entry.Text = string.Empty;
