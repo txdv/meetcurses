@@ -10,7 +10,7 @@ namespace MeetCurses
 	public class ManosTwitter
 	{
 		public Context Context { get; protected set; }
-		public TaskScheduler Scheduler { get; protected set; }
+		public TaskScheduler TaskScheduler { get; protected set; }
 		public OAuthTokens OAuthTokens { get; protected set; }
 
 		AsyncWatcher<Action> callbacks;
@@ -23,7 +23,7 @@ namespace MeetCurses
 		public ManosTwitter(Context context, OAuthTokens oauthtokens, TaskScheduler scheduler)
 		{
 			Context = context;
-			Scheduler = scheduler;
+			TaskScheduler = scheduler;
 			OAuthTokens = oauthtokens;
 
 			callbacks = new AsyncWatcher<Action>(Context, (callback) => {
@@ -44,7 +44,7 @@ namespace MeetCurses
 				callbacks.Send(() => {
 					callback(timeline);
 				});
-			}).Start(Scheduler);
+			}).Start(TaskScheduler);
 		}
 
 		public void Tweet(string text, Action<TwitterResponse<TwitterStatus>> callback)
@@ -54,7 +54,7 @@ namespace MeetCurses
 				callbacks.Send(() => {
 					callback(response);
 				});
-			}).Start(Scheduler);
+			}).Start(TaskScheduler);
 		}
 
 		public void User(Action<TwitterResponse<TwitterUser>> callback)
@@ -64,7 +64,7 @@ namespace MeetCurses
 				callbacks.Send(() => {
 					callback(user);
 				});
-			}).Start(Scheduler);
+			}).Start(TaskScheduler);
 		}
 
 		public void UserStream(StreamOptions streamOptions, Action<TwitterStream> streamStarted, Action<TwitterIdCollection> friendsCallback, Action<StopReasons> streamErrorCallback,
@@ -96,7 +96,7 @@ namespace MeetCurses
 					});
 				});
 				callbacks.Send(() => streamStarted(stream));
-			}).Start(Scheduler);
+			}).Start(TaskScheduler);
 		}
 
 		public void UserStream(Action<TwitterStream> streamStarted, Action<TwitterIdCollection> friendsCallback, Action<StopReasons> streamErrorCallback,
@@ -109,7 +109,7 @@ namespace MeetCurses
 				eventCallback, rawJsonCallback);
 		}
 
-		public void UserStream(StreamOptions streamOptions, StreamCallbacks callbacks, Action<TwitterStream> streamStart)
+		public void UserStream(StreamOptions streamOptions, UserStreamCallbacks callbacks, Action<TwitterStream> streamStart)
 		{
 			UserStream(streamOptions, streamStart,
 				callbacks.OnFriends, callbacks.OnStreamError, callbacks.OnStatusCreated,
@@ -117,44 +117,73 @@ namespace MeetCurses
 				callbacks.OnEvent, callbacks.OnRawJson);
 		}
 
-		public void UserStream(StreamCallbacks callbacks, Action<TwitterStream> streamStart)
+		public void UserStream(UserStreamCallbacks callbacks, Action<TwitterStream> streamStart)
 		{
 			UserStream(new StreamOptions(), callbacks, streamStart);
 		}
 
-		public void UserStream(StreamOptions streamOptions, Action<TwitterStream, StreamCallbacks> streamStart)
+		public void UserStream(StreamOptions streamOptions, Action<TwitterStream, UserStreamCallbacks> streamStart)
 		{
-			StreamCallbacks callbacks = new StreamCallbacks();
+			UserStreamCallbacks callbacks = new UserStreamCallbacks();
 			UserStream(streamOptions, callbacks, (stream) => {
 				streamStart(stream, callbacks);
 			});
 		}
 
-		public void UserStream(Action<TwitterStream, StreamCallbacks> streamStart)
+		public void UserStream(Action<TwitterStream, UserStreamCallbacks> streamStart)
 		{
 			UserStream(new StreamOptions(), streamStart);
 		}
 
-	}
-
-	public class StreamCallbacks
-	{
-		internal void OnFriends(TwitterIdCollection friendsId)
+		public void PublicStream(StreamOptions streamOptions, Action<TwitterStream> streamStarted,
+			Action<StopReasons> streamErrorCallback,
+			Action<TwitterStatus> statusCreatedCallback, Action<TwitterStreamDeletedEvent> statusDeletedCallback,
+			Action<TwitterStreamEvent> eventCallback, Action<string> rawJsonCallback = null)
 		{
-			if (Friends != null) {
-				Friends(friendsId);
-			}
+			var stream = new TwitterStream(OAuthTokens, "MeetCurses", streamOptions);
+			new Task(() => {
+				stream.StartPublicStream((stopreason) => {
+					callbacks.Send(() => streamErrorCallback(stopreason));
+				}, (status) => {
+					callbacks.Send(() => statusCreatedCallback(status));
+				}, (status) => {
+					callbacks.Send(() => statusDeletedCallback(status));
+				}, (twitterStreamEvent) => {
+					callbacks.Send(() => eventCallback(twitterStreamEvent));
+				}, (rawJson) => {
+					callbacks.Send(() => {
+						if (rawJsonCallback != null) {
+							rawJsonCallback(rawJson);
+						}
+					});
+				});
+			}).Start(TaskScheduler);
 		}
 
-		public Action<TwitterIdCollection> Friends;
+		public void PublicStream(StreamOptions options, PublicStreamCallbacks callbacks, Action<TwitterStream> streamStarted)
+		{
+			PublicStream(options, streamStarted, callbacks.OnStreamError,
+				callbacks.OnStatusCreated, callbacks.OnStatusDeleted,
+				callbacks.OnEvent, callbacks.OnRawJson);
+		}
 
+		public void PublicStream(StreamOptions options, Action<TwitterStream, PublicStreamCallbacks> streamStarted)
+		{
+			PublicStreamCallbacks callbacks = new PublicStreamCallbacks();
+			PublicStream(options, callbacks, (stream) => {
+				streamStarted(stream, callbacks);
+			});
+		}
+	}
+
+	public class PublicStreamCallbacks
+	{
 		internal void OnStreamError(StopReasons reasons)
 		{
 			if (StreamError != null) {
 				StreamError(reasons);
 			}
 		}
-
 		public Action<StopReasons> StreamError;
 
 		internal void OnStatusCreated(TwitterStatus status)
@@ -163,7 +192,6 @@ namespace MeetCurses
 				StatusCreated(status);
 			}
 		}
-
 		public Action<TwitterStatus> StatusCreated;
 
 		internal void OnStatusDeleted(TwitterStreamDeletedEvent deleted)
@@ -172,26 +200,7 @@ namespace MeetCurses
 				StatusDeleted(deleted);
 			}
 		}
-
 		public Action<TwitterStreamDeletedEvent> StatusDeleted;
-
-		internal void OnDirectedMessageCreated(TwitterDirectMessage directMessage)
-		{
-			if (DirectMessageCreated != null) {
-				DirectMessageCreated(directMessage);
-			}
-		}
-
-		public Action<TwitterDirectMessage> DirectMessageCreated;
-
-		internal void OnDirectMessageDeleted(TwitterStreamDeletedEvent streamDeletedEvent)
-		{
-			if (DirectMessageDeleted != null) {
-				DirectMessageDeleted(streamDeletedEvent);
-			}
-		}
-
-		public Action<TwitterStreamDeletedEvent> DirectMessageDeleted;
 
 		internal void OnEvent(TwitterStreamEvent @event)
 		{
@@ -199,7 +208,6 @@ namespace MeetCurses
 				Event(@event);
 			}
 		}
-
 		public Action<TwitterStreamEvent> Event;
 
 		internal void OnRawJson(string rawJson)
@@ -208,8 +216,34 @@ namespace MeetCurses
 				RawJson(rawJson);
 			}
 		}
-
 		public Action<string> RawJson;
+	}
+
+	public class UserStreamCallbacks : PublicStreamCallbacks
+	{
+		internal void OnFriends(TwitterIdCollection friendsId)
+		{
+			if (Friends != null) {
+				Friends(friendsId);
+			}
+		}
+		public Action<TwitterIdCollection> Friends;
+
+		internal void OnDirectedMessageCreated(TwitterDirectMessage directMessage)
+		{
+			if (DirectMessageCreated != null) {
+				DirectMessageCreated(directMessage);
+			}
+		}
+		public Action<TwitterDirectMessage> DirectMessageCreated;
+
+		internal void OnDirectMessageDeleted(TwitterStreamDeletedEvent streamDeletedEvent)
+		{
+			if (DirectMessageDeleted != null) {
+				DirectMessageDeleted(streamDeletedEvent);
+			}
+		}
+		public Action<TwitterStreamDeletedEvent> DirectMessageDeleted;
 	}
 }
 
