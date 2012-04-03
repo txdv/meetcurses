@@ -30,7 +30,9 @@ namespace MeetCurses
 				}
 
 				if (position != val) {
+					int old = position;
 					position = val;
+					OnChangePosition(old);
 				}
 			}
 		}
@@ -49,6 +51,10 @@ namespace MeetCurses
 			: base()
 		{
 			position = 0;
+			ChangePosition += (_) => {
+				Invalid = true;
+				App.MainWindow.Statusbar.Invalid = true;
+			};
 		}
 
 		void Update()
@@ -141,7 +147,7 @@ namespace MeetCurses
 
 			int height = Height - 1;
 
-			for (int i = stats.Values.Count - 1 - Position; i > 0; i--) {
+			for (int i = stats.Values.Count - 1 - Position; i >= 0; i--) {
 				var status = stats.Values[i];
 				string text = status.Text;
 				int h = (int)Math.Ceiling((double)text.Length / textWidth);
@@ -150,8 +156,8 @@ namespace MeetCurses
 				height -= h;
 			}
 
-			Fill(' ', 0, 0, length, height);
-			Fill(' ', textStart, 9, textWidth, height);
+			Fill(' ', 0, 0, length, height + 1);
+			Fill(' ', textStart, 0, textWidth, height + 1);
 		}
 
 		void UpdateUserInformation()
@@ -169,13 +175,11 @@ namespace MeetCurses
 
 			if (key == 339) {
 				// up
-				Position = Position * (int)(Height * 0.8);
-				Invalid = true;
+				Position += (int)(Height * 0.8);
 				return true;
 			} else if (key == 338) {
 				// down
-				Position = Position - (int)(Height * 0.8);
-				Invalid = true;
+				Position -= (int)(Height * 0.8);
 				return true;
 			} else if (key == 21) {
 				Update();
