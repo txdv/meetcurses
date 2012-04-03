@@ -127,17 +127,13 @@ namespace MeetCurses
 			}
 
 
-			var context = Context.Create(Backend.Poll);
-
-			ManosTwitter = new ManosTwitter(context, App.Configuration.User.GetOAuthTokens());
-
-			App.MainWindow = new MainWindow();
-
-			MainWindow.Timeline.Load("homeline.xml");
 
 			Application.Init(Context.Create(Backend.Poll));
-			ManosTwitter = new ManosTwitter(Application.Context, App.Configuration.User.GetOAuthTokens());
 
+			MainWindow = new MainWindow();
+			MainWindow.Timeline.Load("homeline.xml");
+
+			ManosTwitter = new ManosTwitter(Application.Context, App.Configuration.User.GetOAuthTokens());
 			Application.Run(new FullsizeContainer(App.MainWindow));
 
 			MainWindow.Timeline.Save("homeline.xml");
