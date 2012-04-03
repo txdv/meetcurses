@@ -63,6 +63,8 @@
     <Compile Include="ManosTwitter.cs" />
     <Compile Include="Widgets\MainWindow.cs" />
     <Compile Include="Widgets\Statusbar.cs" />
+    <Compile Include="Widgets\PrefixEntry.cs" />
+    <Compile Include="Widgets\Theme.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

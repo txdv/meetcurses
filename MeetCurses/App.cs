@@ -77,11 +77,6 @@ namespace MeetCurses
 			}
 		}
 
-		public static readonly int Accent = 202;
-		public static readonly int Normal = 255;
-		public static readonly int Brace = 241;
-		public static readonly int Background = 237;
-
 		public static MainWindow MainWindow { get; protected set; }
 
 		public static ManosTwitter ManosTwitter { get; private set; }
@@ -126,14 +121,15 @@ namespace MeetCurses
 				Configuration.Serialize("MeetCurses.xml", Configuration);
 			}
 
-
-
 			Application.Init(Context.Create(Backend.Poll));
+
+			ManosTwitter = new ManosTwitter(Application.Context, App.Configuration.User.GetOAuthTokens());
 
 			MainWindow = new MainWindow();
 			MainWindow.Timeline.Load("homeline.xml");
+			MainWindow.Timeline.Update();
+			MainWindow.Timeline.UpdateUserInformation();
 
-			ManosTwitter = new ManosTwitter(Application.Context, App.Configuration.User.GetOAuthTokens());
 			Application.Run(new FullsizeContainer(App.MainWindow));
 
 			MainWindow.Timeline.Save("homeline.xml");

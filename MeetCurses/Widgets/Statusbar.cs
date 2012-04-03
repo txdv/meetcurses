@@ -15,8 +15,7 @@ namespace MeetCurses
 			string text = "";
 
 			if (App.UserInformation != null) {
-				text += string.Format("[{0}] {1} tweets, {2} following, {3} followers ",
-					App.UserInformation.ScreenName,
+				text += string.Format("{0} tweets, {1} following, {2} followers ",
 					App.UserInformation.NumberOfStatuses,
 					App.UserInformation.NumberOfFollowers,
 					App.UserInformation.NumberOfFriends);
@@ -29,19 +28,8 @@ namespace MeetCurses
 				text += "[Tweeting] ";
 			}
 
-			text += App.Key;
-			text += " ";
-			ColorString.Escape(text, (ch) => {
-				switch (ch) {
-				case '[':
-				case ']':
-				case ',':
-					return ColorPair.From(App.Accent, App.Background);
-				}
-				return ColorPair.From(App.Normal, App.Background);
-
-			}).Fill(this);
-			Curses.attron(ColorPair.From(-1, -1).Attribute);
+			Theme.Escape(text, Theme.Background).Fill(this);
+			ColorString.Finish();
 		}
 	}
 }

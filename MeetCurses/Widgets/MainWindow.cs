@@ -8,13 +8,16 @@ namespace MeetCurses
 	{
 		public Timeline Timeline { get; protected set; }
 		public Statusbar Statusbar { get; protected set; }
-		public Entry Entry { get; protected set; }
+		public PrefixEntry Entry { get; protected set; }
 
 		public MainWindow()
 		{
 			Statusbar = new Statusbar() { Height = 1 };
 			Timeline = new Timeline();
-			Entry = new Entry() { Height = 1 };
+			Entry = new PrefixEntry() {
+				Height = 1,
+				ColorPrefix = Theme.Escape(string.Format("[{0}] ", App.Configuration.User.ScreenName))
+			};
 
 			this.Add(Timeline, Box.Setting.Fill);
 			this.Add(Statusbar, Box.Setting.Size);

@@ -57,7 +57,7 @@ namespace MeetCurses
 			};
 		}
 
-		void Update()
+		public void Update()
 		{
 			Update(1);
 		}
@@ -140,7 +140,7 @@ namespace MeetCurses
 
 			int space = 1;
 
-			Line.DrawV(this, length + space, 0, Height, ColorPair.From(App.Background, -1));
+			Line.DrawV(this, length + space, 0, Height, ColorPair.From(Theme.Background, -1));
 
 			int textStart = length + 1 + space * 2;
 			int textWidth = Width - textStart;
@@ -160,7 +160,7 @@ namespace MeetCurses
 			Fill(' ', textStart, 0, textWidth, height + 1);
 		}
 
-		void UpdateUserInformation()
+		public void UpdateUserInformation()
 		{
 			App.ManosTwitter.User((response) => {
 				if (response.Result == RequestResult.Success) {
